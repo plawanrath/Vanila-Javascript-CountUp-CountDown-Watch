@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<!--
+My solution includes:
+
+1 input field: in which the user can specify how many seconds to count up to / down from. (We'll call this the countTarget from now on.)
+2 read-only stopwatch displays: one counting up from 0 to countTarget, and the other counting down from countTarget to 0.
+2 sets of stopwatch controls: one set of controls (start/pause button and reset button) for each stopwatch.
+
+When the user enters a number into the input field, it resets one stopwatch to 0 and the other to countTarget.
+The stopwatches always display in days, hours, minutes, and seconds (i.e. "3 days 1 hour 2 minutes 12 seconds").
+Each stopwatch obeys its own start/pause button and reset button.
+When a stopwatch reaches its target (either 0 or countTarget depending on which direction they are counting), the stopwatch stops counting and the start/pause button becomes disabled.
+
+NOTE: Since the question asked not to use pre-written plugins, I chose to write this in native vanilla javascript.
+Ideally I would have probably implemented it in JQuery.
+-->
+<html>
+<head>
+<script>
+var sec = -1;
+var min = 0;
+var hour = 0;
+var day = 0;
+var ticks = 0;
+var s = -1;
+var m = 0;
+var h = 0;
+var d = 0;
+var target = 0;
+function getVal()
+{
+	if(target == 0){
+	target = Number(document.getElementById("enter").value);
+}
+}
+
+function stopwatch(text) {
+	ticks++;
+   sec++;
+  if (sec == 60) {
+   sec = 0;
+   min = min + 1; }
+  else {
+   min = min; }
+  if (min == 60) {
+   min = 0; 
+   hour += 1; }
+   if (hour == 24) {
+   	hour = 0;
+   	day += 1; 
+   }
+
+if (sec<=9) { sec = "0" + sec; }
+   document.clock.stwa.value = ((day<=9) ? "0"+day : day) + " days " + ((hour<=9) ? "0"+hour : hour) + " hours " + ((min<=9) ? "0" + min : min) + " minutes " + sec + " seconds ";
+
+s = target % 60;
+var im = Math.floor(target / 60);
+m = im % 60;
+var ih = Math.floor(im / 60);
+h = ih % 24;
+d = Math.floor(ih / 24);
+if (s<=9) { s = "0" + s; }
+document.clock.stwa1.value =((d<=9) ? "0"+d : d) + " days " + ((h<=9) ? "0"+h : h) + " hours " + ((m<=9) ? "0" + m : m) + " minutes " + s + " seconds ";
+target--;
+  if (text == "Start") { document.clock.theButton.value = "Pause "; }
+  if (text == "Pause ") { document.clock.theButton.value = "Start"; }
+
+  if (document.clock.theButton.value == "Start") {
+   window.clearTimeout(SD);
+   sec=sec-1;
+   ticks=ticks-1;
+   target=target+1;
+   return true; }
+   var finalVal = document.getElementById("enter").value;
+   if(ticks <= finalVal) {
+   SD=window.setTimeout("stopwatch();", 1000); }
+   else {
+   	document.clock.theButton.disabled = true;
+   }
+}
+
+function resetIt() {
+  sec = -1;
+  min = 0;
+  hour = 0;
+  day = 0;
+  s = -1;
+  m = 0;
+  h = 0;
+  ticks = 0;
+  target = 0;
+  if(document.clock.theButton.disabled == true)
+  {document.clock.theButton.disabled = false;}
+  if (document.clock.theButton.value == "Pause ") {
+  document.clock.theButton.value = "Start"; }
+  document.clock.stwa.value = "";
+  document.clock.stwa1.value = "";
+  document.getElementById("enter").value = "";
+  window.clearTimeout(SD);
+ }
+</script>
+</head>
+<body>
+<h3 align="center">Plawan's Simple Stopwatch</h3><p>
+<table align="center" border="0" width="50%" cellspacing="0">
+  <form name="clock"><br />
+  <tr>
+     <td>
+       <label>Enter seconds to count</label></td>
+       <td><input type="text" size="50" id="enter" /></td></tr>
+       <tr><td>
+       <label>Count Down</label></td>
+       <td><input type="text" size="50" name="stwa" readonly/></td></tr>
+       <tr><td>
+       <label>Count Up</label></td>
+       <td><input type="text" size="50" name="stwa1" readonly/></td></tr>
+       <tr align="center"><td colspan="2">
+       <input type="button" name="theButton" onClick="getVal();stopwatch(this.value);" value="Start" />
+       <input type="button" value="Reset" onClick="resetIt();" /></td></tr>
+       </form>
+</table>
+</body>
+</html>
